@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS | High Yield Investment</title>
+    <style>
+        :root {
+            --primary: #00ff88;
+            --secondary: #7000ff;
+            --bg: #0f0f13;
+            --card: #1a1a24;
+            --text: #ffffff;
+            --gray: #666;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Header */
+        header {
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+        }
+
+        .logo {
+            font-weight: 900;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Screens */
+        .screen {
+            padding: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Inputs & Buttons */
+        input {
+            width: 100%;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: white;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, var(--primary), #00cc6a);
+            color: #000;
+        }
+
+        .btn-secondary {
+            background: #333;
+            color: white;
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            filter: brightness(1.1);
+        }
+
+        /* Dashboard Elements */
+        .balance-card {
+            background: linear-gradient(135deg, #1a1a24, #252530);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid #333;
+            position: relative;
+        }
+
+        .balance-label {
+            color: var(--gray);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin: 10px 0;
+            color: var(--primary);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background: #000;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            border: 1px solid #333;
+        }
+
+        .stat-val {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        /* Level Progress */
+        .level-bar-container {
+            background: #333;
+            height: 6px;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .level-bar {
+            height: 100%;
+            background: var(--secondary);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        /* Logs */
+        .log-container {
+            height: 150px;
+            overflow-y: auto;
+            background: #000;
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 0.85rem;
+            border: 1px solid #333;
+        }
+
+        .log-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid #222;
+            color: #aaa;
+        }
+
+        .log-entry.success { color: var(--primary); }
+        .log-entry.info { color: #888; }
+
+        /* Referral Section */
+        .referral-box {
+            background: #111;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px dashed var(--secondary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .copy-btn {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        /* Live Ticker */
+        .ticker {
+            background: #000;
+            color: var(--primary);
+            padding: 5px;
+            font-size: 0.8rem;
+            text-align: center;
+            border-bottom: 1px solid #333;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse { animation: pulse 2s infinite; }
+
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <!-- Live Ticker -->
+    <div class="ticker">
+        📈 NEXUS MARKET: <span id="marketRate">1.00</span>% Profit/Min | Status: <span style="color:#00ff88">ACTIVE</span>
+    </div>
+
+    <!-- Login Screen -->
+    <div id="loginScreen" class="screen active">
+        <div style="text-align: center; margin-top: 40px;">
+            <h1 class="logo">NEXUS</h1>
+            <p style="color: #666;">High Risk • High Reward</p>
+        </div>
+        
+        <input type="tel" id="mobileInput" placeholder="Mobile Number">
+        <input type="password" id="passInput" placeholder="Password">
+        
+        <button class="btn btn-primary" onclick="login()">ENTER SYSTEM</button>
+        <button class="btn btn-secondary" onclick="resetDemo()">Reset Demo Data</button>
+    </div>
+
+    <!-- Dashboard Screen -->
+    <div id="dashboardScreen" class="screen">
+        <header>
+            <div class="logo" style="font-size: 1.2rem;">NEXUS</div>
+            <div style="cursor: pointer;" onclick="logout()">⚡ Logout</div>
+        </header>
+
+        <div class="balance-card">
+            <div class="balance-label">Total Balance</div>
+            <div class="balance-amount pulse" id="displayBalance">₹0.00</div>
+            <div style="font-size: 0.9rem; color: #888;">
+                Active Investment: <span id="displayInvested">₹0</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-val" id="displayLevel">1</div>
+                <div class="stat-label">Current Level</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-val" id="displayProfit">10%</div>
+                <div class="stat-label">Daily ROI</div>
+            </div>
+        </div>
+
+        <!-- Level Progress -->
+        <div style="margin-bottom: 20px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.8rem; color:#888; margin-bottom:5px;">
+                <span>Level Progress</span>
+                <span id="progressText">0%</span>
+            </div>
+            <div class="level-bar-container">
+                <div class="level-bar" id="levelBar"></div>
+            </div>
+        </div>
+
+        <div class="referral-box">
+            <div style="font-size: 0.9rem; margin-bottom: 5px;">Your Referral Link</div>
+            <div style="font-size: 0.8rem; color: #666; word-break: break-all;" id="refLinkDisplay">Loading...</div>
+            <button class="copy-btn" onclick="copyRef()">📋 Copy Link</button>
+        </div>
+
+        <div style="margin-bottom: 10px; font-weight: bold;">Quick Actions</div>
+        <input type="number" id="investAmount" placeholder="Amount (Min ₹10)" value="10">
+        <button class="btn btn-primary" onclick="manualInvest()">💸 Invest Now</button>
+        <button class="btn btn-secondary" onclick="autoInvest()" style="background: #222; border: 1px solid #444;">🤖 Auto-Invest Loop</button>
+
+        <div style="margin-top: 20px; font-weight: bold; font-size: 0.9rem;">Activity Log</div>
+        <div class="log-container" id="activityLog">
+            <!-- Logs go here -->
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- CONFIGURATION ---
+    const BASE_INVEST = 10;
+    const CASHBACK_PERCENT = 0.40; // 40% Instant Cashback
+    
+    // Market volatility simulation
+    let currentMarketRate = 1.00; 
+
+    // --- STATE MANAGEMENT ---
+    let currentUser = null;
+    let marketInterval;
+
+    // --- INITIALIZATION ---
+    function init() {
+        startMarketSimulation();
+    }
+
+    function startMarketSimulation() {
+        // Simulate changing profit rates every 5 seconds
+        marketInterval = setInterval(() => {
+            // Fluctuate between 0.9% and 1.2%
+            currentMarketRate = (Math.random() * (1.2 - 0.9) + 0.9).toFixed(2);
+            document.getElementById('marketRate').innerText = currentMarketRate;
+            
+            // Update UI if logged in
+            if(currentUser) updateUI();
+        }, 5000);
+    }
+
+    // --- AUTHENTICATION ---
+    function login() {
+        const mobile = document.getElementById('mobileInput').value;
+        const pass = document.getElementById('passInput').value;
+
+        if (!mobile || !pass) {
+            alert("Please enter Mobile and Password");
+            return;
+        }
+
+        if (localStorage.getItem('nexus_user_' + mobile)) {
+            currentUser = JSON.parse(localStorage.getItem('nexus_user_' + mobile));
+        } else {
+            createUser(mobile, pass);
+        }
+
+        showDashboard();
+    }
+
+    function createUser(mobile, pass) {
+        currentUser = {
+            mobile: mobile,
+            password: pass,
+            balance: 0,
+            totalInvested: 0,
+            level: 1,
+            referralCode: Math.floor(Math.random() * 1000000),
+            referredBy: null
+        };
+        localStorage.setItem('nexus_user_' + mobile, JSON.stringify(currentUser));
+        logActivity("Welcome to Nexus! Account Created.", "success");
+    }
+
+    function logout() {
+        clearInterval(marketInterval);
+        currentUser = null;
+        document.getElementById('loginScreen').classList.add('active');
+        document.getElementById('dashboardScreen').classList.remove('active');
+    }
+
+    function resetDemo() {
+        localStorage.clear();
+        location.reload();
+    }
+
+    // --- CORE LOGIC ---
+
+    function manualInvest() {
+        const amountInput = document.getElementById('investAmount').value;
+        const amount = parseFloat(amountInput);
+
+        if (isNaN(amount) || amount < 10) {
+            alert("Minimum investment is ₹10");
+            return;
+        }
+
+        // Logic: 
+        // 1. User pays 'amount' (Simulated as deducted from balance or credit)
+        // 2. User gets 'amount' back into "Active Investment"
+        // 3. User gets 'Cashback' added to "Wallet Balance"
+        
+        // For this demo, we assume the money comes from a virtual source or existing balance
+        // But to make it simple for the user: We just add the Net Profit to their wallet
+        
+        let cashback = amount * CASHBACK_PERCENT;
+        
+        // Add cashback to balance immediately
+        currentUser.balance += cashback;
+        currentUser.totalInvested += amount;
+        
+        saveUser();
+        updateUI();
+        logActivity(`Invested ₹${amount}. Received ₹${cashback.toFixed(2)} Cashback.`, "success");
+        
+        checkLevelUp();
+    }
+
+    function autoInvest() {
+        let iterations = 0;
+        let maxIterations = 100; 
+        
+        // Loop until balance is insufficient or max level reached
+        while (currentUser.balance >= BASE_INVEST && currentUser.level <= 10 && iterations < maxIterations) {
+            let amount = BASE_INVEST;
+            
+            // Deduct cost
+            currentUser.balance -= amount;
+            
+            // Calculate returns
+            let cashback = amount * CASHBACK_PERCENT;
+            
+            // Return principal + cashback (Instant profit game logic)
+            currentUser.balance += (BASE_INVEST + cashback);
+            
+            currentUser.totalInvested += amount;
+            iterations++;
+        }
+        
+        checkLevelUp();
+        saveUser();
+        updateUI();
+        logActivity(`Auto-Invest completed ${iterations} cycles.`, "info");
+    }
+
+    function checkLevelUp() {
+        // Level up every 500 invested rupees roughly
+        let investmentsCount = Math.floor(currentUser.totalInvested / 10);
+        let targetLevel = Math.min(10, 1 + Math.floor(investmentsCount / 50));
+        
+        if (targetLevel > currentUser.level) {
+            currentUser.level = targetLevel;
+            logActivity(`🚀 LEVEL UP! You are now Level ${currentUser.level}`, "success");
+        }
+    }
+
+    // --- UI UPDATES ---
+
+    function showDashboard() {
+        document.getElementById('loginScreen').classList.remove('active');
+        document.getElementById('dashboardScreen').classList.add('active');
+        updateUI();
+    }
+
+    function updateUI() {
+        // Format numbers
+        document.getElementById('displayBalance').innerText = "₹" + currentUser.balance.toFixed(2);
+        document.getElementById('displayInvested').innerText = "₹" + currentUser.totalInvested;
+        document.getElementById('displayLevel').innerText = currentUser.level;
+        
+        // Calculate dynamic profit based on market rate + level bonus
+        let baseProfit = 10 + ((currentUser.level - 1) * 2); // Base 10%, +2% per level
+        let finalProfit = (baseProfit * (currentMarketRate / 1)).toFixed(1);
+        document.getElementById('displayProfit').innerText = finalProfit + "%";
+
+        // Level Progress Bar (Visual only, for gamification)
+        let progress = (currentUser.totalInvested % 500) / 500 * 100;
+        document.getElementById('levelBar').style.width = progress + "%";
+        document.getElementById('progressText').innerText = Math.floor(progress) + "% to Next Level";
+
+        // Referral Link
+        let link = `https://nexus.app/ref/${currentUser.referralCode}`;
+        document.getElementById('refLinkDisplay').innerText = link;
+    }
+
+    function copyRef() {
+        let link = document.getElementById('refLinkDisplay').innerText;
+        navigator.clipboard.writeText(link).then(() => {
+            alert("Referral Link Copied!");
+        });
+    }
+
+    function logActivity(msg, type = "info") {
+        const logBox = document.getElementById('activityLog');
+        const div = document.createElement('div');
+        div.className = `log-entry ${type}`;
+        div.innerText = `[${new Date().toLocaleTimeString()}] ${msg}`;
+        logBox.prepend(div);
+    }
+
+    function saveUser() {
+        if(currentUser) {
+            localStorage.setItem('nexus_user_' + currentUser.mobile, JSON.stringify(currentUser));
+        }
+    }
+
+    // Start
+    init();
+
+</script>
+</body>
+</html>
